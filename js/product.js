@@ -351,42 +351,53 @@ document.addEventListener("DOMContentLoaded", function () {
   if (prevButton && nextButton && productItemsContainer) {
     // Set initial position
     let position = 0;
-    const itemWidth = document.querySelector(".lv-product-item").offsetWidth;
+    const productItem = document.querySelector(".lv-product-item");
+    const itemWidth = productItem ? productItem.offsetWidth : 0;
     const totalItems = document.querySelectorAll(".lv-product-item").length;
     const itemsPerView = getItemsPerView();
     const maxPosition = Math.max(0, totalItems - itemsPerView);
 
-    // Update navigation based on screen size
-    window.addEventListener("resize", function () {
-      position = 0;
-      productItemsContainer.style.transform = `translateX(0)`;
+    // Only proceed with carousel initialization if we have product items
+    if (itemWidth > 0 && totalItems > 0) {
+      // Update navigation based on screen size
+      window.addEventListener("resize", function () {
+        position = 0;
+        productItemsContainer.style.transform = `translateX(0)`;
+        updateNavigation();
+      });
+
+      // Previous button click
+      prevButton.addEventListener("click", function () {
+        if (position > 0) {
+          position--;
+          const translateX = -position * itemWidth;
+          productItemsContainer.style.transform = `translateX(${translateX}px)`;
+          updateNavigation();
+        }
+      });
+
+      // Next button click
+      nextButton.addEventListener("click", function () {
+        if (position < maxPosition) {
+          position++;
+          const translateX = -position * itemWidth;
+          productItemsContainer.style.transform = `translateX(${translateX}px)`;
+          updateNavigation();
+        }
+      });
+
+      // Update navigation visibility
+      function updateNavigation() {
+        prevButton.style.opacity = position === 0 ? "0.5" : "1";
+        nextButton.style.opacity = position >= maxPosition ? "0.5" : "1";
+      }
+
+      // Initial navigation update
       updateNavigation();
-    });
-
-    // Previous button click
-    prevButton.addEventListener("click", function () {
-      if (position > 0) {
-        position--;
-        const translateX = -position * itemWidth;
-        productItemsContainer.style.transform = `translateX(${translateX}px)`;
-        updateNavigation();
-      }
-    });
-
-    // Next button click
-    nextButton.addEventListener("click", function () {
-      if (position < maxPosition) {
-        position++;
-        const translateX = -position * itemWidth;
-        productItemsContainer.style.transform = `translateX(${translateX}px)`;
-        updateNavigation();
-      }
-    });
-
-    // Update navigation visibility
-    function updateNavigation() {
-      prevButton.style.opacity = position === 0 ? "0.5" : "1";
-      nextButton.style.opacity = position >= maxPosition ? "0.5" : "1";
+    } else {
+      // Hide navigation buttons if we don't have product items
+      prevButton.style.display = "none";
+      nextButton.style.display = "none";
     }
 
     // Get items per view based on screen size
@@ -397,9 +408,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (viewportWidth >= 768) return 2;
       return 1;
     }
-
-    // Initial navigation update
-    updateNavigation();
   }
 
   // Filter button functionality
@@ -510,7 +518,7 @@ async function loadProductsFromData() {
     const category = urlParams.get("category");
 
     // Fetch the products data
-    const response = await fetch("../js/data/products.json");
+    const response = await fetch("js/data/products.json");
     if (!response.ok) {
       throw new Error("Failed to load products data");
     }
@@ -640,11 +648,11 @@ function renderProducts(products) {
     productItem.innerHTML = `
       <div class="lv-product-image">
         <a href="product-detail.html?id=${product.id}">
-          <img src="${product.imagePrimary || "../images/placeholder.jpg"}" 
+          <img src="${product.imagePrimary || "images/placeholder.jpg"}" 
                data-hover="${
                  product.imageHover ||
                  product.imagePrimary ||
-                 "../images/placeholder.jpg"
+                 "images/placeholder.jpg"
                }"
                alt="${product.name}">
           ${discountBadge}
