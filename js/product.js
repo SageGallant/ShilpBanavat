@@ -517,27 +517,19 @@ async function loadProductsFromData() {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category");
 
-    // Get the repository name for GitHub Pages
-    let repoPath = "";
-    if (location.hostname.includes("github.io")) {
-      // Extract the repository name from the path (e.g., /ShilpBanavat/pages/product.html)
-      const pathParts = location.pathname.split("/");
-      if (pathParts.length > 1) {
-        repoPath = "/" + pathParts[1]; // e.g., /ShilpBanavat
-      }
-    }
-
-    // Build the correct URL for products.json
     let productsJsonUrl;
+
+    // Check if we're on GitHub Pages
     if (location.hostname.includes("github.io")) {
-      // For GitHub Pages: use absolute path from the repository root
-      productsJsonUrl = `${location.origin}${repoPath}/js/data/products.json`;
+      // For GitHub Pages, we need to include the repository name
+      // The repository name should be ShilpBanavat based on the error
+      productsJsonUrl = `${location.origin}/ShilpBanavat/js/data/products.json`;
+      console.log("GitHub Pages URL:", productsJsonUrl);
     } else {
       // For local development
       productsJsonUrl = "js/data/products.json";
+      console.log("Local development URL:", productsJsonUrl);
     }
-
-    console.log("Fetching products from:", productsJsonUrl);
 
     // Fetch the products data
     const response = await fetch(productsJsonUrl);
@@ -569,8 +561,14 @@ async function loadProductsFromData() {
     // Update page title based on category
     updateCategoryTitle(category);
 
+    // Determine the base path for rendering images
+    let imagePath = "";
+    if (location.hostname.includes("github.io")) {
+      imagePath = `${location.origin}/ShilpBanavat/`;
+    }
+
     // Render the products
-    renderProducts(filteredProducts, repoPath);
+    renderProducts(filteredProducts, imagePath);
   } catch (error) {
     console.error("Error loading products:", error);
     showNotification("Failed to load products. Please try again later.");
@@ -608,7 +606,7 @@ function updateCategoryTitle(category) {
 }
 
 // Render products to the page
-function renderProducts(products, repoPath = "") {
+function renderProducts(products, imagePath = "") {
   const productContainer = document.querySelector(".lv-product-items");
   if (!productContainer) return;
 
@@ -666,14 +664,7 @@ function renderProducts(products, repoPath = "") {
       originalPriceHtml = `<span class="lv-original-price">${formattedOriginalPrice}</span>`;
     }
 
-    // Adjust image paths based on whether we're on GitHub Pages or local
-    let imagePath = "";
-    if (location.hostname.includes("github.io")) {
-      // For GitHub Pages: use absolute path from the repository root
-      imagePath = `${location.origin}${repoPath}/`;
-    }
-
-    // Full image URLs
+    // Full image URLs with proper path
     const imagePrimary = product.imagePrimary
       ? imagePath + product.imagePrimary
       : imagePath + "images/placeholder.jpg";
