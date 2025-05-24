@@ -517,8 +517,13 @@ async function loadProductsFromData() {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category");
 
-    // Fetch the products data
-    const response = await fetch("js/data/products.json");
+    // Determine the base path for GitHub Pages or local development
+    const baseUrl = location.pathname.includes("/pages/")
+      ? "../../" // Go up two levels from /ShilpBanavat/pages/
+      : "./"; // Use relative path for local development
+
+    // Fetch the products data with the correct base path
+    const response = await fetch(`${baseUrl}js/data/products.json`);
     if (!response.ok) {
       throw new Error("Failed to load products data");
     }
@@ -590,6 +595,11 @@ function renderProducts(products) {
   const productContainer = document.querySelector(".lv-product-items");
   if (!productContainer) return;
 
+  // Determine the base path for GitHub Pages or local development
+  const baseUrl = location.pathname.includes("/pages/")
+    ? "../../" // Go up two levels from /ShilpBanavat/pages/
+    : "./"; // Use relative path for local development
+
   // Clear existing products
   productContainer.innerHTML = "";
 
@@ -644,16 +654,20 @@ function renderProducts(products) {
       originalPriceHtml = `<span class="lv-original-price">${formattedOriginalPrice}</span>`;
     }
 
+    // Adjust image paths to use the correct base URL
+    const imagePrimary = product.imagePrimary
+      ? baseUrl + product.imagePrimary
+      : baseUrl + "images/placeholder.jpg";
+    const imageHover = product.imageHover
+      ? baseUrl + product.imageHover
+      : imagePrimary;
+
     // Build product HTML
     productItem.innerHTML = `
       <div class="lv-product-image">
         <a href="product-detail.html?id=${product.id}">
-          <img src="${product.imagePrimary || "images/placeholder.jpg"}" 
-               data-hover="${
-                 product.imageHover ||
-                 product.imagePrimary ||
-                 "images/placeholder.jpg"
-               }"
+          <img src="${imagePrimary}" 
+               data-hover="${imageHover}"
                alt="${product.name}">
           ${discountBadge}
         </a>
