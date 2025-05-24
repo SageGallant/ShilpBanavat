@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
   initColorOptions();
 });
 
+/**
+ * Initialize wishlist page content
+ */
 function initWishlist() {
   // Get wishlist data from localStorage
-  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
   // Clear existing items in wishlist grid
   const wishlistGrid = document.querySelector(".wishlist-grid");
@@ -17,9 +20,16 @@ function initWishlist() {
 
   wishlistGrid.innerHTML = "";
 
-  // Check if wishlist has items
+  // Normalize wishlist data - convert any string IDs to objects if needed
+  wishlist = normalizeWishlistData(wishlist);
+
+  // Save normalized data back to localStorage
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+  // Update wishlist count
   updateWishlistCount(wishlist.length);
 
+  // Show/hide appropriate content based on whether wishlist has items
   if (wishlist.length === 0) {
     document.getElementById("empty-wishlist").style.display = "block";
     document.getElementById("wishlist-content").style.display = "none";
@@ -27,40 +37,74 @@ function initWishlist() {
     document.getElementById("empty-wishlist").style.display = "none";
     document.getElementById("wishlist-content").style.display = "block";
 
-    // Populate wishlist items from localStorage
+    // Populate wishlist items
     wishlist.forEach((item) => {
       const wishlistItem = createWishlistItemElement(item);
       wishlistGrid.appendChild(wishlistItem);
     });
 
-    // Reinitialize event handlers for the new elements
+    // Setup event handlers for the newly created elements
     setupWishlistItemEventHandlers();
   }
 
-  // Initialize the wishlist action buttons
+  // Initialize wishlist action buttons
   initWishlistActions();
 }
 
-// Create a wishlist item element from data
+/**
+ * Normalize wishlist data to ensure consistent structure
+ * Converts any string IDs to objects and ensures all objects have required properties
+ */
+function normalizeWishlistData(wishlist) {
+  return wishlist.filter((item) => {
+    // If item is a string (just an ID), filter it out as we can't display it properly
+    if (typeof item === "string") {
+      console.warn(`Removing legacy wishlist item format (string ID): ${item}`);
+      return false;
+    }
+
+    // Ensure item is an object with required properties
+    if (typeof item === "object" && item !== null) {
+      // Check if item has all required properties
+      if (item.id && item.name) {
+        // Add default values for missing properties
+        if (!item.price) item.price = "$0.00";
+        if (!item.image) item.image = "../images/placeholder-product1.jpg";
+        if (!item.category) item.category = "Handicrafts";
+        return true;
+      }
+    }
+
+    // Filter out invalid items
+    console.warn("Removing invalid wishlist item:", item);
+    return false;
+  });
+}
+
+/**
+ * Create a DOM element for a wishlist item
+ */
 function createWishlistItemElement(item) {
   const wishlistItem = document.createElement("div");
   wishlistItem.className = "wishlist-item";
   wishlistItem.setAttribute("data-product-id", item.id);
 
-  // Format image URL or use placeholder
-  const imageUrl = item.image || "../images/placeholder-product1.jpg";
+  // Ensure item has all required properties with fallbacks
+  const name = item.name || "Product";
+  const category = item.category || "Handicrafts";
   const price = item.price || "$0.00";
+  const imageUrl = item.image || "../images/placeholder-product1.jpg";
 
   wishlistItem.innerHTML = `
     <div class="wishlist-item-header">
       <button class="remove-wishlist-item"><i class="fas fa-times"></i></button>
     </div>
     <div class="wishlist-item-image">
-      <img src="${imageUrl}" alt="${item.name}">
+      <img src="${imageUrl}" alt="${name}" onerror="this.src='../images/placeholder-product1.jpg';">
     </div>
     <div class="wishlist-item-details">
-      <h3>${item.name}</h3>
-      <p class="item-category">${item.category || "Handicrafts"}</p>
+      <h3>${name}</h3>
+      <p class="item-category">${category}</p>
       <p class="item-price">${price}</p>
       <div class="item-actions">
         <button class="add-to-cart-btn">Add to Cart</button>
@@ -71,7 +115,9 @@ function createWishlistItemElement(item) {
   return wishlistItem;
 }
 
-// Setup event handlers for wishlist items
+/**
+ * Setup event handlers for wishlist items
+ */
 function setupWishlistItemEventHandlers() {
   // Handle remove item from wishlist
   const removeButtons = document.querySelectorAll(".remove-wishlist-item");
@@ -90,8 +136,10 @@ function setupWishlistItemEventHandlers() {
         // Update wishlist in localStorage
         removeFromWishlist(productId);
 
-        // Update count
+        // Get updated wishlist
         const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+        // Update count
         updateWishlistCount(wishlist.length);
 
         // Show empty state if no items left
@@ -115,12 +163,47 @@ function setupWishlistItemEventHandlers() {
       const productPrice =
         wishlistItem.querySelector(".item-price").textContent;
       const productImage = wishlistItem.querySelector("img").src;
+      const productCategory =
+        wishlistItem.querySelector(".item-category").textContent;
 
       // Add to cart
-      addToCart(productId, productName, productPrice, "", productImage);
+      addToCart(
+        productId,
+        productName,
+        productPrice,
+        "",
+        productImage,
+        productCategory
+      );
+
+      // Remove from wishlist
+      setTimeout(() => {
+        // Animate removal
+        wishlistItem.style.opacity = "0";
+        wishlistItem.style.transform = "scale(0.9)";
+
+        setTimeout(() => {
+          wishlistItem.remove();
+
+          // Update wishlist in localStorage
+          removeFromWishlist(productId);
+
+          // Get updated wishlist
+          const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+          // Update count
+          updateWishlistCount(wishlist.length);
+
+          // Show empty state if no items left
+          if (wishlist.length === 0) {
+            document.getElementById("empty-wishlist").style.display = "block";
+            document.getElementById("wishlist-content").style.display = "none";
+          }
+        }, 300);
+      }, 500);
 
       // Show notification
-      showNotification(`${productName} added to your cart`);
+      showNotification(`${productName} moved to cart`, "success");
     });
   });
 
@@ -128,7 +211,9 @@ function setupWishlistItemEventHandlers() {
   initColorOptions();
 }
 
-// Initialize wishlist action buttons
+/**
+ * Initialize wishlist action buttons
+ */
 function initWishlistActions() {
   // Handle add all to cart
   const addAllToCartBtn = document.getElementById("add-all-to-cart");
@@ -141,17 +226,61 @@ function initWishlistActions() {
         return;
       }
 
+      // First add all items to cart
       wishlistItems.forEach((item) => {
         const productId = item.getAttribute("data-product-id");
         const productName = item.querySelector("h3").textContent;
         const productPrice = item.querySelector(".item-price").textContent;
         const productImage = item.querySelector("img").src;
+        const productCategory =
+          item.querySelector(".item-category").textContent;
 
         // Add to cart
-        addToCart(productId, productName, productPrice, "", productImage);
+        addToCart(
+          productId,
+          productName,
+          productPrice,
+          "",
+          productImage,
+          productCategory
+        );
       });
 
-      showNotification("All items added to your cart");
+      // Then clear the wishlist
+      setTimeout(() => {
+        // Clear localStorage wishlist
+        localStorage.removeItem("wishlist");
+
+        // Animate removal of all items
+        wishlistItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.style.opacity = "0";
+            item.style.transform = "scale(0.9)";
+
+            setTimeout(() => {
+              item.remove();
+            }, 300);
+          }, index * 50); // Stagger the animations
+        });
+
+        // Show empty state after last item is removed
+        setTimeout(() => {
+          document.getElementById("empty-wishlist").style.display = "block";
+          document.getElementById("wishlist-content").style.display = "none";
+
+          // Update header badges
+          if (typeof updateHeaderBadges === "function") {
+            updateHeaderBadges();
+          } else if (window.updateHeaderBadges) {
+            window.updateHeaderBadges();
+          }
+
+          // Update wishlist count
+          updateWishlistCount(0);
+        }, wishlistItems.length * 50 + 300);
+      }, 500);
+
+      showNotification("All items moved to cart", "success");
     });
   }
 
@@ -192,6 +321,9 @@ function initWishlistActions() {
   }
 }
 
+/**
+ * Setup share modal functionality
+ */
 function setupShareModal() {
   const shareWishlistBtn = document.querySelector(".share-wishlist");
   const shareModal = document.getElementById("share-modal");
@@ -280,6 +412,9 @@ function setupShareModal() {
   }
 }
 
+/**
+ * Initialize color options for products with color variants
+ */
 function initColorOptions() {
   const colorOptions = document.querySelectorAll(".color-option");
 
@@ -304,7 +439,9 @@ function initColorOptions() {
   });
 }
 
-// Update wishlist count display
+/**
+ * Update wishlist count display
+ */
 function updateWishlistCount(count) {
   const countElement = document.getElementById("wishlist-count");
   if (countElement) {
@@ -312,8 +449,17 @@ function updateWishlistCount(count) {
   }
 }
 
-// Add item to cart (localStorage implementation)
-function addToCart(productId, name, price, variant, image) {
+/**
+ * Add item to cart (localStorage implementation)
+ */
+function addToCart(
+  productId,
+  name,
+  price,
+  variant = "",
+  image = "",
+  category = "Handicrafts"
+) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   // Parse price to ensure it's a number
@@ -327,6 +473,7 @@ function addToCart(productId, name, price, variant, image) {
     displayPrice: price,
     variant: variant,
     image: image,
+    category: category,
     quantity: 1,
   };
 
@@ -357,7 +504,9 @@ function addToCart(productId, name, price, variant, image) {
   }
 }
 
-// Parse price string to number
+/**
+ * Parse price string to number
+ */
 function parsePrice(priceString) {
   if (typeof priceString === "number") return priceString;
 
@@ -366,12 +515,20 @@ function parsePrice(priceString) {
   return isNaN(price) ? 0 : price;
 }
 
-// Remove item from wishlist (localStorage implementation)
+/**
+ * Remove item from wishlist (localStorage implementation)
+ */
 function removeFromWishlist(productId) {
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
   // Remove item from wishlist
-  wishlist = wishlist.filter((item) => item.id !== productId);
+  wishlist = wishlist.filter((item) => {
+    if (typeof item === "string") {
+      return item !== productId;
+    } else {
+      return item.id !== productId;
+    }
+  });
 
   // Save to localStorage
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
@@ -385,4 +542,62 @@ function removeFromWishlist(productId) {
       window.updateHeaderBadges();
     }
   }
+}
+
+/**
+ * Show notification to the user
+ */
+function showNotification(message, type = "success") {
+  // Check if function exists in common.js
+  if (typeof window.showNotification === "function") {
+    window.showNotification(message, type);
+    return;
+  }
+
+  // Fallback notification implementation
+  const notificationContainer =
+    document.querySelector(".notification-container") ||
+    (() => {
+      const container = document.createElement("div");
+      container.className = "notification-container";
+      document.body.appendChild(container);
+      return container;
+    })();
+
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas ${
+        type === "success" ? "fa-check-circle" : "fa-exclamation-circle"
+      }"></i>
+      <span>${message}</span>
+    </div>
+    <button class="notification-close"><i class="fas fa-times"></i></button>
+  `;
+
+  notificationContainer.appendChild(notification);
+
+  // Show notification
+  setTimeout(() => {
+    notification.classList.add("show");
+  }, 10);
+
+  // Hide and remove after 3 seconds
+  setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 3000);
+
+  // Close button functionality
+  notification
+    .querySelector(".notification-close")
+    .addEventListener("click", function () {
+      notification.classList.remove("show");
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    });
 }

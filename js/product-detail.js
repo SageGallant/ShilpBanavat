@@ -2,19 +2,146 @@
 // Product Detail page specific JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
-  initProductGallery();
-  initProductTabs();
-  initQuantitySelector();
-  initVariantSelector();
-  initProductCarousels();
-  initReviewForm();
-  setupVerticalGallery();
-  initAccordion();
-  initColorSelector();
-  setupAddToCart();
-  setupReadMore();
-  setupWishlistHeart();
+  // Load product data first, then initialize everything else
+  loadProductData().then(() => {
+    initProductGallery();
+    initProductTabs();
+    initQuantitySelector();
+    initVariantSelector();
+    initProductCarousels();
+    initReviewForm();
+    setupVerticalGallery();
+    initAccordion();
+    initColorSelector();
+    setupAddToCart();
+    setupReadMore();
+    setupWishlistHeart();
+  });
 });
+
+// Function to load product data from URL parameter
+async function loadProductData() {
+  try {
+    // Get product ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
+    if (!productId) {
+      console.error("No product ID found in URL");
+      return;
+    }
+
+    // Fetch products data
+    const response = await fetch("../js/data/products.json");
+    if (!response.ok) {
+      throw new Error("Failed to fetch products data");
+    }
+
+    const products = await response.json();
+
+    // Find the product with matching ID
+    const product = products.find((p) => p.id === productId);
+
+    if (!product) {
+      console.error("Product not found:", productId);
+      return;
+    }
+
+    // Update page with product data
+    updateProductDetails(product);
+
+    // Update related products
+    updateRelatedProducts(product, products);
+  } catch (error) {
+    console.error("Error loading product data:", error);
+  }
+}
+
+// Function to update product details on the page
+function updateProductDetails(product) {
+  // Update product title, price, description, etc.
+  document.title = `${product.name} | Shilp Banavat`;
+
+  // Update product info
+  const productTitle = document.querySelector(".product-title");
+  if (productTitle) productTitle.textContent = product.name;
+
+  const productPrice = document.querySelector(".product-price");
+  if (productPrice) {
+    // Check if the product is on sale
+    if (product.isOnSale && product.originalPrice > product.price) {
+      productPrice.innerHTML = `<span class="current-price">$${product.price.toFixed(
+        2
+      )}</span> <span class="original-price">$${product.originalPrice.toFixed(
+        2
+      )}</span>`;
+    } else {
+      productPrice.textContent = `$${product.price.toFixed(2)}`;
+    }
+  }
+
+  const productId = document.querySelector(".product-id");
+  if (productId) productId.textContent = product.id;
+
+  const productDescription = document.querySelector(".product-description p");
+  if (productDescription) productDescription.textContent = product.description;
+
+  // Update product label (New, Bestseller, etc.)
+  const productLabel = document.querySelector(".product-label");
+  if (productLabel) {
+    if (product.isNew) {
+      productLabel.textContent = "NEW";
+      productLabel.style.display = "block";
+    } else if (product.isBestseller) {
+      productLabel.textContent = "BESTSELLER";
+      productLabel.style.display = "block";
+    } else if (product.isOnSale) {
+      productLabel.textContent = "SALE";
+      productLabel.style.display = "block";
+    } else {
+      productLabel.style.display = "none";
+    }
+  }
+
+  // Update product details tab content if exists
+  updateProductTabs(product);
+
+  // Update product gallery images
+  updateProductGallery(product);
+
+  // Update stock information
+  updateStockInfo(product);
+
+  // Update "You May Also Like" section (if time permits)
+  // This would require fetching more products with similar categories
+}
+
+// Function to update product gallery images
+function updateProductGallery(product) {
+  const galleryContainer = document.querySelector(".gallery-vertical");
+  if (
+    !galleryContainer ||
+    !product.imageGallery ||
+    product.imageGallery.length === 0
+  )
+    return;
+
+  // Clear existing gallery items
+  galleryContainer.innerHTML = "";
+
+  // Add new gallery items
+  product.imageGallery.forEach((imageUrl) => {
+    const galleryItem = document.createElement("div");
+    galleryItem.className = "gallery-item";
+
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = product.name;
+
+    galleryItem.appendChild(img);
+    galleryContainer.appendChild(galleryItem);
+  });
+}
 
 // Product gallery functionality
 function initProductGallery() {
@@ -57,6 +184,58 @@ function initProductTabs() {
       document.getElementById(tabId).classList.add("active");
     });
   });
+}
+
+// Function to update product tabs content
+function updateProductTabs(product) {
+  // Update the description tab
+  const descriptionTab = document.getElementById("tab-description");
+  if (descriptionTab) {
+    // Keep the existing HTML structure but update content
+    const descriptionParagraphs = descriptionTab.querySelectorAll("p");
+    if (descriptionParagraphs.length > 0) {
+      descriptionParagraphs[0].textContent = product.description;
+
+      // If there are additional details, add them to other paragraphs
+      if (descriptionParagraphs.length > 1 && product.details) {
+        descriptionParagraphs[1].textContent = product.details;
+      }
+    }
+  }
+
+  // Update the details tab - material, origin, etc.
+  const detailsTab = document.getElementById("tab-details");
+  if (detailsTab) {
+    // Find material list item by searching through all list items
+    const materialListItems = detailsTab.querySelectorAll("li");
+    materialListItems.forEach((item) => {
+      if (item.textContent.includes("Material")) {
+        item.textContent = `Material: ${product.material}`;
+      }
+    });
+
+    // Find origin paragraph by searching through all paragraphs
+    const paragraphs = detailsTab.querySelectorAll("p");
+    paragraphs.forEach((p) => {
+      if (p.textContent.includes("Origin")) {
+        p.textContent = `Handcrafted in ${product.origin} by skilled artisans with generations of experience.`;
+      }
+    });
+  }
+
+  // Update artisan tab if available
+  const artisanTab = document.getElementById("tab-artisan");
+  if (artisanTab && product.artisan) {
+    const artisanName = artisanTab.querySelector(".artisan-bio h3");
+    if (artisanName) {
+      artisanName.textContent = `Master Craftsperson ${product.artisan}`;
+    }
+
+    const artisanLocation = artisanTab.querySelector(".artisan-location");
+    if (artisanLocation && product.origin) {
+      artisanLocation.textContent = product.origin;
+    }
+  }
 }
 
 // Quantity selector functionality
@@ -526,4 +705,205 @@ function setupWishlistHeart() {
       }
     });
   }
+}
+
+// Function to update stock information
+function updateStockInfo(product) {
+  // If there's a stock display element, update it
+  const stockDisplay = document.querySelector(".stock-info");
+  if (stockDisplay && product.stock !== undefined) {
+    if (product.stock > 10) {
+      stockDisplay.textContent = "In Stock";
+      stockDisplay.classList.remove("low-stock", "out-of-stock");
+      stockDisplay.classList.add("in-stock");
+    } else if (product.stock > 0) {
+      stockDisplay.textContent = `Only ${product.stock} left in stock`;
+      stockDisplay.classList.remove("in-stock", "out-of-stock");
+      stockDisplay.classList.add("low-stock");
+    } else {
+      stockDisplay.textContent = "Out of Stock";
+      stockDisplay.classList.remove("in-stock", "low-stock");
+      stockDisplay.classList.add("out-of-stock");
+
+      // Disable add to cart button if out of stock
+      const addToCartBtn = document.querySelector(".add-to-cart");
+      if (addToCartBtn) {
+        addToCartBtn.disabled = true;
+        addToCartBtn.textContent = "Out of Stock";
+      }
+    }
+  }
+}
+
+// Function to update related products in "You May Also Like" section
+function updateRelatedProducts(currentProduct, allProducts) {
+  const complementarySection = document.querySelector(
+    ".complementary-items .product-carousel"
+  );
+  if (!complementarySection) return;
+
+  // Clear existing items
+  complementarySection.innerHTML = "";
+
+  // Find products from the same category or with similar tags
+  const relatedProducts = allProducts
+    .filter(
+      (product) =>
+        product.id !== currentProduct.id &&
+        (product.category === currentProduct.category ||
+          product.mainCategory === currentProduct.mainCategory ||
+          product.tags.some((tag) => currentProduct.tags.includes(tag)))
+    )
+    .slice(0, 4); // Limit to 4 products
+
+  // Create and append product items
+  relatedProducts.forEach((product) => {
+    const productItem = document.createElement("div");
+    productItem.className = "product-item";
+    productItem.innerHTML = `
+      <div class="product-image">
+        <a href="product-detail.html?id=${product.id}">
+          <img src="${product.imagePrimary}" alt="${product.name}">
+        </a>
+        <button class="wishlist-btn" data-product-id="${
+          product.id
+        }"><i class="far fa-heart"></i></button>
+      </div>
+      <div class="product-info">
+        <h3><a href="product-detail.html?id=${product.id}">${
+      product.name
+    }</a></h3>
+        <p class="price">$${product.price.toFixed(2)}</p>
+      </div>
+    `;
+
+    complementarySection.appendChild(productItem);
+  });
+
+  // Re-initialize wishlist buttons for newly created elements
+  initWishlistButtons(complementarySection);
+
+  // If we found related products, also update the "Recently Viewed" section
+  updateRecentlyViewed(currentProduct, allProducts);
+}
+
+// Function to update the "Recently Viewed" section
+function updateRecentlyViewed(currentProduct, allProducts) {
+  // Get or initialize recently viewed products from localStorage
+  let recentlyViewed = JSON.parse(
+    localStorage.getItem("recentlyViewed") || "[]"
+  );
+
+  // Add current product to recently viewed if not already there
+  if (!recentlyViewed.includes(currentProduct.id)) {
+    recentlyViewed.unshift(currentProduct.id); // Add to beginning
+    recentlyViewed = recentlyViewed.slice(0, 4); // Keep only 4 most recent
+    localStorage.setItem("recentlyViewed", JSON.stringify(recentlyViewed));
+  }
+
+  // Update the recently viewed section if it exists
+  const recentlyViewedSection = document.querySelector(
+    ".recently-viewed .product-carousel"
+  );
+  if (!recentlyViewedSection) return;
+
+  // Clear existing items
+  recentlyViewedSection.innerHTML = "";
+
+  // Get product details for recently viewed IDs
+  const recentProducts = recentlyViewed
+    .map((id) => allProducts.find((p) => p.id === id))
+    .filter(Boolean); // Remove any undefined values
+
+  // Create and append product items
+  recentProducts.forEach((product) => {
+    const productItem = document.createElement("div");
+    productItem.className = "product-item";
+    productItem.innerHTML = `
+      <div class="product-image">
+        <a href="product-detail.html?id=${product.id}">
+          <img src="${product.imagePrimary}" alt="${product.name}">
+        </a>
+        <button class="wishlist-btn" data-product-id="${
+          product.id
+        }"><i class="far fa-heart"></i></button>
+      </div>
+      <div class="product-info">
+        <h3><a href="product-detail.html?id=${product.id}">${
+      product.name
+    }</a></h3>
+        <p class="price">$${product.price.toFixed(2)}</p>
+      </div>
+    `;
+
+    recentlyViewedSection.appendChild(productItem);
+  });
+
+  // Re-initialize wishlist buttons for newly created elements
+  initWishlistButtons(recentlyViewedSection);
+}
+
+// Initialize wishlist buttons for dynamically created elements
+function initWishlistButtons(container) {
+  const wishlistButtons = container.querySelectorAll(".wishlist-btn");
+  wishlistButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const icon = this.querySelector("i");
+      if (icon.classList.contains("far")) {
+        icon.classList.remove("far");
+        icon.classList.add("fas");
+        showNotification("Item added to wishlist");
+      } else {
+        icon.classList.remove("fas");
+        icon.classList.add("far");
+        showNotification("Item removed from wishlist");
+      }
+    });
+  });
+}
+
+// Function to show notifications
+function showNotification(message, type = "success") {
+  // Check if notification container exists, if not create it
+  let notificationContainer = document.querySelector(".notification-container");
+  if (!notificationContainer) {
+    notificationContainer = document.createElement("div");
+    notificationContainer.className = "notification-container";
+    document.body.appendChild(notificationContainer);
+  }
+
+  // Create notification
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span>${message}</span>
+    </div>
+    <button class="notification-close"><i class="fas fa-times"></i></button>
+  `;
+
+  // Add to container
+  notificationContainer.appendChild(notification);
+
+  // Add close button functionality
+  const closeButton = notification.querySelector(".notification-close");
+  closeButton.addEventListener("click", () => {
+    notification.classList.add("hiding");
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  });
+
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    notification.classList.add("hiding");
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 5000);
+
+  // Show notification with animation
+  setTimeout(() => {
+    notification.classList.add("show");
+  }, 10);
 }

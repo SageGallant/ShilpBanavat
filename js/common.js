@@ -204,7 +204,13 @@ function updateHeaderBadges() {
 
   // Update wishlist badge
   const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  const wishlistCount = wishlist.length;
+
+  // Filter to count only valid wishlist items
+  const validWishlistItems = wishlist.filter(
+    (item) => typeof item === "object" && item !== null && item.id && item.name
+  );
+
+  const wishlistCount = validWishlistItems.length;
   const wishlistBadge = document.querySelector(".wishlist-badge");
 
   if (wishlistBadge) {
@@ -248,6 +254,8 @@ function initWishlistButtons() {
 
       let productName = "Product";
       let productPrice = "$0.00";
+      let productImage = "";
+      let productCategory = "Handicrafts";
 
       const nameElement =
         productElement.querySelector("h3") ||
@@ -255,9 +263,15 @@ function initWishlistButtons() {
       const priceElement =
         productElement.querySelector(".price") ||
         productElement.querySelector(".product-price");
+      const imageElement = productElement.querySelector("img");
+      const categoryElement =
+        productElement.querySelector(".item-category") ||
+        productElement.querySelector(".product-category");
 
       if (nameElement) productName = nameElement.textContent.trim();
       if (priceElement) productPrice = priceElement.textContent.trim();
+      if (imageElement) productImage = imageElement.src;
+      if (categoryElement) productCategory = categoryElement.textContent.trim();
 
       // Get current wishlist
       let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -268,6 +282,8 @@ function initWishlistButtons() {
           id: productId,
           name: productName,
           price: productPrice,
+          image: productImage,
+          category: productCategory,
         };
 
         // Check if item already exists before adding
@@ -276,12 +292,18 @@ function initWishlistButtons() {
           localStorage.setItem("wishlist", JSON.stringify(wishlist));
         }
 
-        showNotification("Product added to wishlist");
+        showNotification(`${productName} added to wishlist`);
       } else {
         // Remove from wishlist
-        wishlist = wishlist.filter((item) => item.id !== productId);
+        wishlist = wishlist.filter((item) => {
+          if (typeof item === "string") {
+            return item !== productId;
+          } else {
+            return item.id !== productId;
+          }
+        });
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
-        showNotification("Product removed from wishlist");
+        showNotification(`${productName} removed from wishlist`);
       }
 
       // Update header badges
@@ -434,3 +456,6 @@ function showNotification(message, type = "success") {
       }, 300);
     });
 }
+
+// Make showNotification globally available
+window.showNotification = showNotification;

@@ -226,9 +226,20 @@ function initMoveToWishlist() {
       const productName = cartItem.querySelector("h3").textContent;
       const productPrice =
         cartItem.querySelector(".cart-item-price").textContent;
+      const productImage =
+        cartItem.querySelector(".cart-item-image img")?.src || "";
+      const productCategory =
+        cartItem.querySelector(".cart-item-category")?.textContent ||
+        "Handicrafts";
 
       // Add to wishlist
-      addToWishlist(productId, productName, productPrice);
+      addToWishlist(
+        productId,
+        productName,
+        productPrice,
+        productImage,
+        productCategory
+      );
 
       // Remove from cart (reuse existing function)
       cartItem.querySelector(".remove-item").click();
@@ -560,7 +571,13 @@ function removeFromCart(productId) {
 }
 
 // Add item to wishlist (localStorage implementation)
-function addToWishlist(productId, name, price) {
+function addToWishlist(
+  productId,
+  name,
+  price,
+  image = "",
+  category = "Handicrafts"
+) {
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
   // Check if item already exists in wishlist
@@ -572,6 +589,8 @@ function addToWishlist(productId, name, price) {
       id: productId,
       name: name,
       price: price,
+      image: image,
+      category: category,
     };
 
     // Add to wishlist

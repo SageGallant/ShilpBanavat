@@ -701,38 +701,153 @@ function initWishlistToggle() {
       e.preventDefault();
       const icon = button.querySelector("i");
 
+      // Get product information from the closest product item
+      const productItem =
+        button.closest(".lv-product-item") || button.closest(".product-item");
+      if (!productItem) {
+        console.error("Could not find product item container");
+        return;
+      }
+
+      // Try to get product ID from the button first, then from the product item
+      let productId =
+        button.getAttribute("data-product-id") ||
+        productItem.getAttribute("data-product-id");
+
+      if (!productId) {
+        // Generate a random ID if none exists
+        productId = `product_${Math.random().toString(36).substr(2, 9)}`;
+        productItem.setAttribute("data-product-id", productId);
+      }
+
+      // Get product details
+      let productName, productPrice, productImage, productCategory;
+
+      // Try to get info from product item
+      const nameElement =
+        productItem.querySelector("h3") ||
+        productItem.querySelector(".lv-product-info h3");
+      const priceElement =
+        productItem.querySelector(".lv-price") ||
+        productItem.querySelector(".price");
+      const imageElement = productItem.querySelector("img");
+      const categoryElement =
+        productItem.querySelector(".product-category") ||
+        productItem.closest("[data-category]");
+
+      // Extract the information with fallbacks
+      productName = nameElement ? nameElement.textContent.trim() : "Product";
+      productPrice = priceElement ? priceElement.textContent.trim() : "$0.00";
+      productImage = imageElement
+        ? imageElement.src
+        : "../images/placeholder-product1.jpg";
+
+      // For category, try multiple approaches
+      if (categoryElement) {
+        productCategory = categoryElement.textContent.trim();
+      } else if (productItem.hasAttribute("data-category")) {
+        productCategory = productItem.getAttribute("data-category");
+      } else {
+        // Get from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get("category");
+        if (categoryParam) {
+          switch (categoryParam) {
+            case "women":
+              productCategory = "Women's Collection";
+              break;
+            case "men":
+              productCategory = "Men's Collection";
+              break;
+            case "home":
+              productCategory = "Home Decor";
+              break;
+            case "gifts":
+              productCategory = "Gifts";
+              break;
+            default:
+              productCategory = "Handicrafts";
+          }
+        } else {
+          productCategory = "Handicrafts";
+        }
+      }
+
       // Toggle icon class
-      if (icon.classList.contains("far")) {
+      const isAdding = icon.classList.contains("far");
+      if (isAdding) {
         icon.classList.remove("far");
         icon.classList.add("fas");
-        showNotification("Product added to wishlist");
+        // Use styled notification with product name
+        if (typeof window.showNotification === "function") {
+          window.showNotification(
+            `${productName} added to wishlist`,
+            "success"
+          );
+        } else {
+          showNotification(`${productName} added to wishlist`, "success");
+        }
       } else {
         icon.classList.remove("fas");
         icon.classList.add("far");
-        showNotification("Product removed from wishlist");
+        // Use styled notification with product name
+        if (typeof window.showNotification === "function") {
+          window.showNotification(
+            `${productName} removed from wishlist`,
+            "success"
+          );
+        } else {
+          showNotification(`${productName} removed from wishlist`, "success");
+        }
       }
 
-      // Here you would add/remove from wishlist in localStorage
-      const productId = button.getAttribute("data-product-id");
-      toggleProductInWishlist(productId);
+      // Add/remove from wishlist in localStorage
+      toggleProductInWishlist(
+        productId,
+        productName,
+        productPrice,
+        productImage,
+        productCategory,
+        isAdding
+      );
     });
   });
 }
 
 // Toggle product in wishlist
-function toggleProductInWishlist(productId) {
+function toggleProductInWishlist(
+  productId,
+  name,
+  price,
+  image,
+  category,
+  isAdding
+) {
   // Get current wishlist from localStorage
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-  // Check if product is already in wishlist
-  const index = wishlist.indexOf(productId);
+  if (isAdding) {
+    // Check if product is already in wishlist
+    const existingItem = wishlist.find(
+      (item) => typeof item === "object" && item.id === productId
+    );
 
-  if (index === -1) {
-    // Add to wishlist
-    wishlist.push(productId);
+    if (!existingItem) {
+      // Add to wishlist as an object with complete information
+      const wishlistItem = {
+        id: productId,
+        name: name,
+        price: price,
+        image: image,
+        category: category,
+      };
+      wishlist.push(wishlistItem);
+    }
   } else {
     // Remove from wishlist
-    wishlist.splice(index, 1);
+    wishlist = wishlist.filter((item) =>
+      typeof item === "string" ? item !== productId : item.id !== productId
+    );
   }
 
   // Save updated wishlist

@@ -128,60 +128,172 @@ function initializeWishlistButtons() {
       const button = event.target;
       button.classList.toggle("active");
 
-      // Get product ID
-      const productId = button.getAttribute("data-product-id");
+      // Get product information
+      const productItem = button.closest(".product-item");
+      if (!productItem) return;
+
+      const productId =
+        productItem.getAttribute("data-product-id") ||
+        `product_${Math.random().toString(36).substr(2, 9)}`;
+      const productName =
+        productItem.querySelector("h3")?.textContent || "Product";
+      const productPrice =
+        productItem.querySelector(".price")?.textContent || "$0.00";
+      const productImage = productItem.querySelector("img")?.src || "";
+      const productCategory =
+        productItem.querySelector(".product-category")?.textContent ||
+        "Handicrafts";
 
       // Toggle in wishlist
-      toggleProductInWishlist(productId);
+      toggleProductInWishlist(
+        productId,
+        productName,
+        productPrice,
+        productImage,
+        productCategory,
+        button.classList.contains("active")
+      );
 
-      // Show notification
+      // Show notification with consistent styling and wording
       if (button.classList.contains("active")) {
-        showNotification("Product added to wishlist");
+        // Use window.showNotification if available, otherwise use local implementation
+        if (typeof window.showNotification === "function") {
+          window.showNotification(
+            `${productName} added to wishlist`,
+            "success"
+          );
+        } else {
+          showNotification(`${productName} added to wishlist`, "success");
+        }
       } else {
-        showNotification("Product removed from wishlist");
+        if (typeof window.showNotification === "function") {
+          window.showNotification(
+            `${productName} removed from wishlist`,
+            "success"
+          );
+        } else {
+          showNotification(`${productName} removed from wishlist`, "success");
+        }
       }
     }
   });
 }
 
 // Toggle product in wishlist
-function toggleProductInWishlist(productId) {
+function toggleProductInWishlist(
+  productId,
+  name,
+  price,
+  image,
+  category,
+  isAdding
+) {
   // Get current wishlist from localStorage
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-  // Check if product is already in wishlist
-  const index = wishlist.indexOf(productId);
+  if (isAdding) {
+    // Check if product is already in wishlist
+    const existingItem = wishlist.find(
+      (item) => typeof item === "object" && item.id === productId
+    );
 
-  if (index === -1) {
-    // Add to wishlist
-    wishlist.push(productId);
+    if (!existingItem) {
+      // Add to wishlist as an object with complete information
+      const wishlistItem = {
+        id: productId,
+        name: name,
+        price: price,
+        image: image,
+        category: category,
+      };
+      wishlist.push(wishlistItem);
+    }
   } else {
     // Remove from wishlist
-    wishlist.splice(index, 1);
+    wishlist = wishlist.filter((item) =>
+      typeof item === "string" ? item !== productId : item.id !== productId
+    );
   }
 
   // Save updated wishlist
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+  // Update header badges to refresh the wishlist count
+  if (typeof window.updateHeaderBadges === "function") {
+    window.updateHeaderBadges();
+  } else if (typeof updateHeaderBadges === "function") {
+    updateHeaderBadges();
+  }
+
+  // Force a badge update even if the direct function call doesn't work
+  const wishlistBadge = document.querySelector(".wishlist-badge");
+  if (wishlistBadge) {
+    const validWishlistItems = wishlist.filter(
+      (item) =>
+        typeof item === "object" && item !== null && item.id && item.name
+    );
+
+    if (validWishlistItems.length > 0) {
+      wishlistBadge.textContent = validWishlistItems.length;
+      wishlistBadge.style.display = "flex";
+    } else {
+      wishlistBadge.style.display = "none";
+    }
+  }
 }
 
 // Show notification
-function showNotification(message) {
-  const notification = document.createElement("div");
-  notification.className = "notification";
-  notification.textContent = message;
+function showNotification(message, type = "success") {
+  // Check if function exists in common.js
+  if (typeof window.showNotification === "function") {
+    window.showNotification(message, type);
+    return;
+  }
 
-  document.body.appendChild(notification);
+  // Fallback notification implementation
+  const notificationContainer =
+    document.querySelector(".notification-container") ||
+    (() => {
+      const container = document.createElement("div");
+      container.className = "notification-container";
+      document.body.appendChild(container);
+      return container;
+    })();
+
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas ${
+        type === "success" ? "fa-check-circle" : "fa-exclamation-circle"
+      }"></i>
+      <span>${message}</span>
+    </div>
+    <button class="notification-close"><i class="fas fa-times"></i></button>
+  `;
+
+  notificationContainer.appendChild(notification);
 
   // Show notification
   setTimeout(() => {
     notification.classList.add("show");
   }, 10);
 
-  // Hide and remove notification
+  // Hide and remove after 3 seconds
   setTimeout(() => {
     notification.classList.remove("show");
     setTimeout(() => {
       notification.remove();
     }, 300);
   }, 3000);
+
+  // Close button functionality
+  notification
+    .querySelector(".notification-close")
+    .addEventListener("click", function () {
+      notification.classList.remove("show");
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    });
 }

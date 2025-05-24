@@ -1,0 +1,118 @@
+/* Shilp Banavat - Toast Notifications Styling */
+
+.notification-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 350px;
+}
+
+.notification {
+  background-color: #fff;
+  color: #333;
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.3s ease;
+  border-left: 4px solid #c99c6f;
+  min-width: 280px;
+  max-width: 100%;
+}
+
+.notification.error {
+  border-left-color: #e53935;
+}
+
+.notification.success {
+  border-left-color: #3d8c40;
+}
+
+.notification.info {
+  border-left-color: #2196f3;
+}
+
+.notification.warning {
+  border-left-color: #ffc107;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.notification-content i {
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.notification-content i.fa-check-circle {
+  color: #3d8c40;
+}
+
+.notification-content i.fa-exclamation-circle {
+  color: #e53935;
+}
+
+.notification-content i.fa-info-circle {
+  color: #2196f3;
+}
+
+.notification-content i.fa-exclamation-triangle {
+  color: #ffc107;
+}
+
+.notification-content span {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.notification-close:hover {
+  color: #333;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+  .notification-container {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    align-items: stretch;
+    max-width: 100%;
+  }
+
+  .notification {
+    width: 100%;
+    border-radius: 8px;
+    margin: 5px 0;
+  }
+}

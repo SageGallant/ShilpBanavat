@@ -7,6 +7,8 @@ Louis Vuitton Style Product Page CSS
 .lv-product-container {
   padding: 40px 0;
   background-color: #f6f5f3; /* Light gray background from LV */
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Category header */
@@ -16,6 +18,8 @@ Louis Vuitton Style Product Page CSS
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
   border-bottom: 1px solid transparent;
 }
 
@@ -51,6 +55,7 @@ Louis Vuitton Style Product Page CSS
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .lv-nav-arrow {
@@ -73,11 +78,11 @@ Louis Vuitton Style Product Page CSS
 }
 
 .lv-prev {
-  left: -20px;
+  left: 10px;
 }
 
 .lv-next {
-  right: -20px;
+  right: 10px;
 }
 
 .lv-product-items {
