@@ -876,24 +876,43 @@ function updateRecentlyViewed(currentProduct, allProducts) {
     .map((id) => allProducts.find((p) => p.id === id))
     .filter(Boolean); // Remove any undefined values
 
+  // Determine the base path for images
+  let imagePath = "";
+  if (location.hostname.includes("github.io")) {
+    // For GitHub Pages
+    imagePath = `${location.origin}/ShilpBanavat/`;
+  }
+
   // Create and append product items
   recentProducts.forEach((product) => {
     const productItem = document.createElement("div");
     productItem.className = "product-item";
+
+    // Format price
+    const formattedPrice = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 2,
+    }).format(product.price);
+
+    // Set product image with path adjustment
+    const productImage = product.imagePrimary
+      ? imagePath + product.imagePrimary
+      : imagePath + "images/placeholder.jpg";
+
     productItem.innerHTML = `
       <div class="product-image">
         <a href="product-detail.html?id=${product.id}">
-          <img src="${product.imagePrimary}" alt="${product.name}">
+          <img src="${productImage}" alt="${product.name}" 
+               onerror="this.src='${imagePath}images/placeholder.jpg'">
         </a>
-        <button class="wishlist-btn" data-product-id="${
-          product.id
-        }"><i class="far fa-heart"></i></button>
+        <button class="wishlist-btn" data-product-id="${product.id}">
+          <i class="far fa-heart"></i>
+        </button>
       </div>
       <div class="product-info">
-        <h3><a href="product-detail.html?id=${product.id}">${
-      product.name
-    }</a></h3>
-        <p class="price">$${product.price.toFixed(2)}</p>
+        <h3><a href="product-detail.html?id=${product.id}">${product.name}</a></h3>
+        <p class="price">${formattedPrice}</p>
       </div>
     `;
 

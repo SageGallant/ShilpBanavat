@@ -232,10 +232,23 @@ function initWishlistButtons() {
     ".wishlist-btn, .add-to-wishlist"
   );
 
+  // If no wishlist buttons found, just return
+  if (!wishlistBtns || wishlistBtns.length === 0) {
+    console.log("No wishlist buttons found on page");
+    return;
+  }
+
   wishlistBtns.forEach((btn) => {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       const icon = this.querySelector("i");
+
+      // Skip if no icon found
+      if (!icon) {
+        console.log("No icon found in wishlist button");
+        return;
+      }
+
       icon.classList.toggle("fas");
       icon.classList.toggle("far");
 
@@ -243,7 +256,10 @@ function initWishlistButtons() {
       const productElement =
         this.closest(".product-item") ||
         document.querySelector(".product-detail");
-      if (!productElement) return;
+      if (!productElement) {
+        console.log("No product element found for wishlist button");
+        return;
+      }
 
       let productId = productElement.getAttribute("data-product-id");
       if (!productId) {

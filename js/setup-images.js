@@ -1,6 +1,13 @@
 // Shilp Banavat - Image Setup
 // This script provides valid image URLs for the website
 
+// Get the base path for GitHub Pages
+function getBasePath() {
+  return location.hostname.includes("github.io")
+    ? `${location.origin}/ShilpBanavat/`
+    : "";
+}
+
 // Hero Images
 const heroImages = [
   "https://images.unsplash.com/photo-1615529328331-f8917597711f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1600&q=80",
@@ -59,6 +66,10 @@ function imageExists(url) {
 
 // Function to replace placeholder images when the page loads
 document.addEventListener("DOMContentLoaded", function () {
+  // Get base path for GitHub Pages
+  const basePath = getBasePath();
+  console.log("Using base path for images:", basePath);
+
   // Replace hero image
   const heroImageElements = document.querySelectorAll(".hero-image img");
   heroImageElements.forEach(async (img) => {
@@ -185,8 +196,31 @@ document.addEventListener("DOMContentLoaded", function () {
   // Replace all placeholder image sources
   document.querySelectorAll("img").forEach((img) => {
     const src = img.getAttribute("src");
-    if (src && placeholderImages[src.split("/").pop()]) {
-      img.setAttribute("src", placeholderImages[src.split("/").pop()]);
+    if (src) {
+      // Check if the src contains a placeholder image filename
+      const filename = src.split("/").pop();
+
+      // If it's a relative path starting with '/' on GitHub Pages, add the base path
+      if (location.hostname.includes("github.io") && src.startsWith("/")) {
+        img.setAttribute("src", basePath.slice(0, -1) + src);
+        console.log("Fixed absolute path:", img.getAttribute("src"));
+      }
+      // Replace placeholder images with actual images
+      else if (placeholderImages[filename]) {
+        img.setAttribute("src", placeholderImages[filename]);
+        console.log("Replaced placeholder:", filename);
+      }
+      // If on GitHub Pages and path is relative without leading slash, add base path
+      else if (
+        location.hostname.includes("github.io") &&
+        !src.startsWith("http") &&
+        !src.startsWith("data:") &&
+        !src.startsWith("https://")
+      ) {
+        const newSrc = basePath + src;
+        img.setAttribute("src", newSrc);
+        console.log("Added base path to relative image:", newSrc);
+      }
 
       // Add loading attribute for better performance
       img.setAttribute("loading", "lazy");
@@ -196,6 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
         this.onerror = null;
         this.src =
           "https://via.placeholder.com/800x600?text=Image+Not+Available";
+        console.log("Image failed to load, using fallback:", this.src);
       };
     }
   });
