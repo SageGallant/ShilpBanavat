@@ -31,8 +31,20 @@ async function loadProductData() {
       return;
     }
 
+    // Determine the correct URL for products.json based on environment
+    let productsJsonUrl;
+    if (location.hostname.includes("github.io")) {
+      // For GitHub Pages
+      productsJsonUrl = `${location.origin}/ShilpBanavat/js/data/products.json`;
+      console.log("GitHub Pages URL:", productsJsonUrl);
+    } else {
+      // For local development
+      productsJsonUrl = "../js/data/products.json";
+      console.log("Local development URL:", productsJsonUrl);
+    }
+
     // Fetch products data
-    const response = await fetch("../js/data/products.json");
+    const response = await fetch(productsJsonUrl);
     if (!response.ok) {
       throw new Error("Failed to fetch products data");
     }
@@ -129,14 +141,28 @@ function updateProductGallery(product) {
   // Clear existing gallery items
   galleryContainer.innerHTML = "";
 
+  // Determine the base path for images
+  let imagePath = "";
+  if (location.hostname.includes("github.io")) {
+    // For GitHub Pages
+    imagePath = `${location.origin}/ShilpBanavat/`;
+  }
+
   // Add new gallery items
   product.imageGallery.forEach((imageUrl) => {
     const galleryItem = document.createElement("div");
     galleryItem.className = "gallery-item";
 
     const img = document.createElement("img");
-    img.src = imageUrl;
+    // Prepend the base path for GitHub Pages
+    img.src = imagePath + imageUrl;
     img.alt = product.name;
+
+    // Add error handling for images
+    img.onerror = function () {
+      console.log(`Failed to load image: ${this.src}`);
+      this.src = imagePath + "images/placeholder.jpg";
+    };
 
     galleryItem.appendChild(img);
     galleryContainer.appendChild(galleryItem);
@@ -735,56 +761,91 @@ function updateStockInfo(product) {
   }
 }
 
-// Function to update related products in "You May Also Like" section
+// Function to update related products section
 function updateRelatedProducts(currentProduct, allProducts) {
-  const complementarySection = document.querySelector(
-    ".complementary-items .product-carousel"
+  const relatedContainer = document.querySelector(".related-products");
+  if (!relatedContainer) return;
+
+  // Clear existing products
+  relatedContainer.innerHTML = "";
+
+  // Get products in the same category, excluding current product
+  const relatedProducts = allProducts.filter(
+    (product) =>
+      product.id !== currentProduct.id &&
+      (product.category === currentProduct.category ||
+        product.mainCategory === currentProduct.mainCategory)
   );
-  if (!complementarySection) return;
 
-  // Clear existing items
-  complementarySection.innerHTML = "";
+  // Limit to 4 products
+  const productsToShow = relatedProducts.slice(0, 4);
 
-  // Find products from the same category or with similar tags
-  const relatedProducts = allProducts
-    .filter(
-      (product) =>
-        product.id !== currentProduct.id &&
-        (product.category === currentProduct.category ||
-          product.mainCategory === currentProduct.mainCategory ||
-          product.tags.some((tag) => currentProduct.tags.includes(tag)))
-    )
-    .slice(0, 4); // Limit to 4 products
+  // Determine the base path for images
+  let imagePath = "";
+  if (location.hostname.includes("github.io")) {
+    // For GitHub Pages
+    imagePath = `${location.origin}/ShilpBanavat/`;
+  }
 
-  // Create and append product items
-  relatedProducts.forEach((product) => {
+  // Generate HTML for each product
+  productsToShow.forEach((product) => {
     const productItem = document.createElement("div");
     productItem.className = "product-item";
+
+    // Format price
+    const formattedPrice = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 2,
+    }).format(product.price);
+
+    // Format original price if different
+    let originalPriceHtml = "";
+    if (product.isOnSale && product.originalPrice > product.price) {
+      const formattedOriginalPrice = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2,
+      }).format(product.originalPrice);
+      originalPriceHtml = `<span class="original-price">${formattedOriginalPrice}</span>`;
+    }
+
+    // Set product image with path adjustment
+    const productImage = product.imagePrimary
+      ? imagePath + product.imagePrimary
+      : imagePath + "images/placeholder.jpg";
+
+    // Build product HTML
     productItem.innerHTML = `
       <div class="product-image">
         <a href="product-detail.html?id=${product.id}">
-          <img src="${product.imagePrimary}" alt="${product.name}">
+          <img src="${productImage}" alt="${product.name}" 
+               onerror="this.src='${imagePath}images/placeholder.jpg'">
+          ${
+            product.isOnSale
+              ? `<div class="product-badge sale">SALE</div>`
+              : product.isNew
+              ? `<div class="product-badge new">NEW</div>`
+              : ""
+          }
         </a>
-        <button class="wishlist-btn" data-product-id="${
-          product.id
-        }"><i class="far fa-heart"></i></button>
+        <button class="wishlist-btn" data-product-id="${product.id}">
+          <i class="far fa-heart"></i>
+        </button>
       </div>
       <div class="product-info">
         <h3><a href="product-detail.html?id=${product.id}">${
       product.name
     }</a></h3>
-        <p class="price">$${product.price.toFixed(2)}</p>
+        <p class="price">${formattedPrice} ${originalPriceHtml}</p>
       </div>
     `;
 
-    complementarySection.appendChild(productItem);
+    relatedContainer.appendChild(productItem);
   });
 
-  // Re-initialize wishlist buttons for newly created elements
-  initWishlistButtons(complementarySection);
-
-  // If we found related products, also update the "Recently Viewed" section
-  updateRecentlyViewed(currentProduct, allProducts);
+  // Initialize wishlist buttons
+  initWishlistButtons(relatedContainer);
 }
 
 // Function to update the "Recently Viewed" section
@@ -843,20 +904,31 @@ function updateRecentlyViewed(currentProduct, allProducts) {
   initWishlistButtons(recentlyViewedSection);
 }
 
-// Initialize wishlist buttons for dynamically created elements
+// Initialize wishlist buttons for a container
 function initWishlistButtons(container) {
+  if (!container) return;
+
   const wishlistButtons = container.querySelectorAll(".wishlist-btn");
-  wishlistButtons.forEach((button) => {
-    button.addEventListener("click", function () {
+  if (!wishlistButtons || wishlistButtons.length === 0) return;
+
+  wishlistButtons.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
       const icon = this.querySelector("i");
+      if (!icon) return;
+
       if (icon.classList.contains("far")) {
+        // Add to wishlist
         icon.classList.remove("far");
         icon.classList.add("fas");
-        showNotification("Item added to wishlist");
+        icon.style.color = "#d64141";
+        showNotification("Added to wishlist", "success");
       } else {
+        // Remove from wishlist
         icon.classList.remove("fas");
         icon.classList.add("far");
-        showNotification("Item removed from wishlist");
+        icon.style.color = "";
+        showNotification("Removed from wishlist", "success");
       }
     });
   });

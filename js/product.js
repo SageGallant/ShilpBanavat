@@ -521,8 +521,7 @@ async function loadProductsFromData() {
 
     // Check if we're on GitHub Pages
     if (location.hostname.includes("github.io")) {
-      // For GitHub Pages, we need to include the repository name
-      // The repository name should be ShilpBanavat based on the error
+      // For GitHub Pages, explicitly use the full URL with repository name
       productsJsonUrl = `${location.origin}/ShilpBanavat/js/data/products.json`;
       console.log("GitHub Pages URL:", productsJsonUrl);
     } else {
@@ -531,48 +530,74 @@ async function loadProductsFromData() {
       console.log("Local development URL:", productsJsonUrl);
     }
 
+    // Add debug log to check the final URL
+    console.log("Final fetch URL:", productsJsonUrl);
+
     // Fetch the products data
     const response = await fetch(productsJsonUrl);
     if (!response.ok) {
+      console.error(
+        `Failed to fetch products data: ${response.status} ${response.statusText}`
+      );
+      // Try a fallback URL
+      if (location.hostname.includes("github.io")) {
+        console.log("Trying fallback URL...");
+        const fallbackUrl = `https://raw.githubusercontent.com/SageGallant/ShilpBanavat/main/js/data/products.json`;
+        console.log("Fallback URL:", fallbackUrl);
+
+        const fallbackResponse = await fetch(fallbackUrl);
+        if (!fallbackResponse.ok) {
+          throw new Error("Failed to load products data from fallback URL");
+        }
+
+        const products = await fallbackResponse.json();
+        processProducts(products, category);
+        return;
+      }
+
       throw new Error("Failed to load products data");
     }
 
     const products = await response.json();
-
-    // Filter products by category if specified
-    let filteredProducts = products;
-    if (category) {
-      filteredProducts = products.filter((product) => {
-        if (category === "new" && product.isNew) {
-          return true;
-        } else if (category === "women" && product.mainCategory === "women") {
-          return true;
-        } else if (category === "men" && product.mainCategory === "men") {
-          return true;
-        } else if (category === "home" && product.mainCategory === "home") {
-          return true;
-        } else if (category === "gifts" && product.tags.includes("gift")) {
-          return true;
-        }
-        return false;
-      });
-    }
-
-    // Update page title based on category
-    updateCategoryTitle(category);
-
-    // Determine the base path for rendering images
-    let imagePath = "";
-    if (location.hostname.includes("github.io")) {
-      imagePath = `${location.origin}/ShilpBanavat/`;
-    }
-
-    // Render the products
-    renderProducts(filteredProducts, imagePath);
+    processProducts(products, category);
   } catch (error) {
     console.error("Error loading products:", error);
     showNotification("Failed to load products. Please try again later.");
   }
+}
+
+// Helper function to process the products data
+function processProducts(products, category) {
+  // Filter products by category if specified
+  let filteredProducts = products;
+  if (category) {
+    filteredProducts = products.filter((product) => {
+      if (category === "new" && product.isNew) {
+        return true;
+      } else if (category === "women" && product.mainCategory === "women") {
+        return true;
+      } else if (category === "men" && product.mainCategory === "men") {
+        return true;
+      } else if (category === "home" && product.mainCategory === "home") {
+        return true;
+      } else if (category === "gifts" && product.tags.includes("gift")) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  // Update page title based on category
+  updateCategoryTitle(category);
+
+  // Determine the base path for rendering images
+  let imagePath = "";
+  if (location.hostname.includes("github.io")) {
+    imagePath = `${location.origin}/ShilpBanavat/`;
+  }
+
+  // Render the products
+  renderProducts(filteredProducts, imagePath);
 }
 
 // Update the category title based on selected category
