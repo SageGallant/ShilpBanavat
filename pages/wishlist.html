@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist | Shilp Banavat</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/wishlist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="header-actions">
+                    <div class="header-language">
+                        <span>English</span>
+                    </div>
+                    <div class="header-country">
+                        <span>India</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="main-header">
+                <div class="header-left">
+                    <nav class="main-navigation">
+                        <ul>
+                            <li><a href="../pages/product.html?category=new">New</a></li>
+                            <li><a href="../pages/product.html?category=women">Women</a></li>
+                            <li><a href="../pages/product.html?category=men">Men</a></li>
+                            <li><a href="../pages/product.html?category=home">Home</a></li>
+                            <li><a href="../pages/product.html?category=gifts">Gifts</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="logo">
+                    <a href="../index.html">SHILP BANAVAT</a>
+                </div>
+                <div class="header-right">
+                    <nav class="utility-navigation">
+                        <ul>
+                            <li><a href="#" id="search-toggle"><i class="fas fa-search"></i></a></li>
+                            <li><a href="profile.html"><i class="fas fa-user"></i></a></li>
+                            <li><a href="wishlist.html"><i class="fas fa-heart"></i></a></li>
+                            <li><a href="cart.html"><i class="fas fa-shopping-bag"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Wishlist Section -->
+    <section class="wishlist-section">
+        <div class="container">
+            <h1 class="page-title">My Wishlist</h1>
+
+            <div id="empty-wishlist" style="display: none;">
+                <div class="empty-wishlist">
+                    <h2>Your wishlist is empty</h2>
+                    <p>Browse our collections and discover our finest handicrafts</p>
+                    <a href="../pages/product.html" class="btn-primary">Shop Now</a>
+                </div>
+            </div>
+
+            <div id="wishlist-content">
+                <div class="wishlist-actions">
+                    <div class="wishlist-count">
+                        <span id="wishlist-count">4 Items</span>
+                    </div>
+                    <div class="wishlist-share">
+                        <a href="#" class="btn-text share-wishlist"><i class="fas fa-share-alt"></i> Share Wishlist</a>
+                    </div>
+                </div>
+
+                <div class="wishlist-grid">
+                    <div class="wishlist-item" data-product-id="1">
+                        <div class="wishlist-item-header">
+                            <button class="remove-wishlist-item"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="wishlist-item-image">
+                            <img src="../images/placeholder-product1.jpg" alt="Handcrafted Ceramic Vase">
+                        </div>
+                        <div class="wishlist-item-details">
+                            <h3>Handcrafted Ceramic Vase</h3>
+                            <p class="item-category">Pottery & Ceramics</p>
+                            <p class="item-price">$65.99</p>
+                            <div class="item-actions">
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wishlist-item" data-product-id="2">
+                        <div class="wishlist-item-header">
+                            <button class="remove-wishlist-item"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="wishlist-item-image">
+                            <img src="../images/placeholder-product2.jpg" alt="Block Print Cushion Cover">
+                        </div>
+                        <div class="wishlist-item-details">
+                            <h3>Block Print Cushion Cover</h3>
+                            <p class="item-category">Textiles & Fabrics</p>
+                            <p class="item-price">$39.99</p>
+                            <div class="item-actions">
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wishlist-item" data-product-id="3">
+                        <div class="wishlist-item-header">
+                            <button class="remove-wishlist-item"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="wishlist-item-image">
+                            <img src="../images/placeholder-product3.jpg" alt="Brass Table Lamp">
+                        </div>
+                        <div class="wishlist-item-details">
+                            <h3>Brass Table Lamp</h3>
+                            <p class="item-category">Home Decor</p>
+                            <p class="item-price">$109.99</p>
+                            <div class="item-variant-selector">
+                                <select class="variant-select">
+                                    <option>Select Size</option>
+                                    <option>Small</option>
+                                    <option>Medium</option>
+                                    <option>Large</option>
+                                </select>
+                            </div>
+                            <div class="item-actions">
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wishlist-item" data-product-id="4">
+                        <div class="wishlist-item-header">
+                            <button class="remove-wishlist-item"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="wishlist-item-image">
+                            <img src="../images/placeholder-product4.jpg" alt="Hand-woven Silk Scarf">
+                        </div>
+                        <div class="wishlist-item-details">
+                            <h3>Hand-woven Silk Scarf</h3>
+                            <p class="item-category">Textiles & Fabrics</p>
+                            <p class="item-price">$54.99</p>
+                            <div class="item-variant-selector">
+                                <div class="color-options">
+                                    <span class="color-option" style="background-color: #AF8C69;"></span>
+                                    <span class="color-option" style="background-color: #4A5568;"></span>
+                                    <span class="color-option" style="background-color: #718096;"></span>
+                                </div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wishlist-footer">
+                    <div class="wishlist-bulk-actions">
+                        <button id="add-all-to-cart" class="btn-primary">Add All to Cart</button>
+                        <button id="clear-wishlist" class="btn-outline">Clear Wishlist</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products Section -->
+    <section class="related-products">
+        <div class="container">
+            <h2 class="section-title">You May Also Like</h2>
+            <div class="product-grid">
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="../images/placeholder-trending1.jpg" alt="Handwoven Basket">
+                        <button class="wishlist-btn"></button>
+                    </div>
+                    <div class="product-info">
+                        <h3>Handwoven Basket</h3>
+                        <p class="price">$84.99</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="../images/placeholder-trending2.jpg" alt="Leather Journal">
+                        <button class="wishlist-btn"></button>
+                    </div>
+                    <div class="product-info">
+                        <h3>Leather Journal</h3>
+                        <p class="price">$44.99</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="../images/placeholder-trending3.jpg" alt="Silver Filigree Earrings">
+                        <button class="wishlist-btn"></button>
+                    </div>
+                    <div class="product-info">
+                        <h3>Silver Filigree Earrings</h3>
+                        <p class="price">$65.99</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="../images/placeholder-trending4.jpg" alt="Clay Sculpture">
+                        <button class="wishlist-btn"></button>
+                    </div>
+                    <div class="product-info">
+                        <h3>Clay Sculpture</h3>
+                        <p class="price">$129.99</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Share Wishlist Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Your Wishlist</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Share your wishlist with friends and family</p>
+                <div class="share-options">
+                    <a href="#" class="share-option" data-platform="whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a href="#" class="share-option" data-platform="facebook">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="#" class="share-option" data-platform="twitter">
+                        <i class="fab fa-twitter"></i>
+                        <span>Twitter</span>
+                    </a>
+                    <a href="#" class="share-option" data-platform="email">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email</span>
+                    </a>
+                </div>
+                <div class="share-link">
+                    <p>Or copy the link</p>
+                    <div class="copy-link-group">
+                        <input type="text" id="wishlist-link" value="https://shilpbanavat.com/wishlist/shared/123456"
+                            readonly>
+                        <button id="copy-link-btn" class="btn-primary">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Women</a></li>
+                        <li><a href="#">Men</a></li>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Gifts</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Help</h4>
+                    <ul>
+                        <li><a href="#">Customer Service</a></li>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Size Guide</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Artisan Partners</a></li>
+                        <li><a href="#">Sustainability</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col newsletter">
+                    <h4>Stay Connected</h4>
+                    <p>Join our mailing list and be the first to know about new collections and exclusive offers.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Enter your email">
+                        <button type="submit">Subscribe</button>
+                    </form>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2023 Shilp Banavat. All rights reserved.</p>
+                </div>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/common.js"></script>
+    <script src="../js/icon-manager.js"></script>
+    <script src="../js/wishlist.js"></script>
+</body>
+
+</html>

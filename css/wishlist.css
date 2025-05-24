@@ -1,0 +1,417 @@
+/*
+Shilp Banavat - Premium Handicrafts E-commerce
+Wishlist Page Styles
+*/
+
+/* =============== WISHLIST PAGE GENERAL =============== */
+.wishlist-section {
+  padding: 2rem 0 6rem;
+}
+
+.page-title {
+  font-family: var(--font-secondary);
+  font-size: 3.2rem;
+  text-align: center;
+  margin-bottom: 4rem;
+  letter-spacing: 0.05em;
+}
+
+/* =============== EMPTY WISHLIST =============== */
+.empty-wishlist {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.empty-wishlist i {
+  font-size: 5rem;
+  color: var(--light-text);
+  margin-bottom: 2rem;
+}
+
+.empty-wishlist h2 {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-wishlist p {
+  font-size: 1.6rem;
+  color: var(--light-text);
+  margin-bottom: 3rem;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =============== WISHLIST CONTENT =============== */
+.wishlist-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.wishlist-count {
+  font-size: 1.6rem;
+  color: var(--light-text);
+}
+
+.share-wishlist {
+  font-size: 1.5rem;
+}
+
+.share-wishlist i {
+  margin-right: 0.5rem;
+}
+
+/* =============== WISHLIST GRID =============== */
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.wishlist-item {
+  border: 1px solid var(--border-color);
+  padding: 0;
+  transition: var(--transition);
+  position: relative;
+}
+
+.wishlist-item:hover {
+  box-shadow: var(--box-shadow);
+}
+
+.wishlist-item-header {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
+.remove-wishlist-item {
+  background-color: white;
+  color: var(--primary-color);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-size: 1.4rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.remove-wishlist-item:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.wishlist-item-image {
+  height: 30rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.wishlist-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.wishlist-item:hover .wishlist-item-image img {
+  transform: scale(1.05);
+}
+
+.wishlist-item-details {
+  padding: 2rem;
+}
+
+.wishlist-item-details h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+
+.item-category {
+  font-size: 1.4rem;
+  color: var(--light-text);
+  margin-bottom: 1rem;
+}
+
+.item-price {
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.item-variant-selector {
+  margin-bottom: 1.5rem;
+}
+
+.variant-select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  font-size: 1.4rem;
+  color: var(--text-color);
+  background-color: white;
+  cursor: pointer;
+}
+
+.color-options {
+  display: flex;
+  gap: 1rem;
+}
+
+.color-option {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.active::after {
+  content: "";
+  position: absolute;
+  top: -0.4rem;
+  left: -0.4rem;
+  right: -0.4rem;
+  bottom: -0.4rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 50%;
+}
+
+.item-actions {
+  display: flex;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 1.2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.add-to-cart-btn:hover {
+  background-color: var(--hover-color);
+}
+
+/* =============== WISHLIST FOOTER =============== */
+.wishlist-footer {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 3rem;
+}
+
+.wishlist-bulk-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* =============== RELATED PRODUCTS =============== */
+.related-products {
+  padding: 6rem 0;
+  background-color: #f9f9f9;
+}
+
+/* =============== SHARE MODAL =============== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background-color: white;
+  max-width: 50rem;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--light-text);
+  transition: var(--transition);
+}
+
+.close-modal:hover {
+  color: var(--primary-color);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-body > p {
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.share-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.share-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-color);
+  transition: var(--transition);
+}
+
+.share-option i {
+  font-size: 2.4rem;
+  margin-bottom: 0.8rem;
+  width: 5rem;
+  height: 5rem;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.share-option span {
+  font-size: 1.4rem;
+}
+
+.share-option:hover {
+  color: var(--accent-color);
+}
+
+.share-option:hover i {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.share-link {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+
+.share-link p {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.copy-link-group {
+  display: flex;
+  gap: 1rem;
+}
+
+#wishlist-link {
+  flex: 1;
+  padding: 1.2rem;
+  border: 1px solid var(--border-color);
+  font-size: 1.4rem;
+  background-color: #f9f9f9;
+}
+
+#copy-link-btn {
+  padding: 0 2rem;
+  white-space: nowrap;
+}
+
+/* =============== RESPONSIVE STYLES =============== */
+@media (max-width: 992px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .wishlist-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .wishlist-bulk-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .wishlist-bulk-actions button {
+    width: 100%;
+  }
+
+  .share-options {
+    gap: 1.5rem;
+  }
+
+  .copy-link-group {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .wishlist-section {
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-size: 2.8rem;
+  }
+
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+  }
+}

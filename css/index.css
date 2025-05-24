@@ -1,0 +1,290 @@
+/* 
+Shilp Banavat - Premium Handicrafts E-commerce
+Homepage Specific Styles
+*/
+
+/* =============== HERO SECTION =============== */
+.hero-section {
+  position: relative;
+}
+
+.hero-image {
+  height: 85vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-content {
+  position: absolute;
+  bottom: 10%;
+  left: 10%;
+  color: white;
+  max-width: 500px;
+}
+
+.hero-content h1 {
+  font-family: var(--font-secondary);
+  font-size: 4.8rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.hero-content p {
+  font-size: 1.8rem;
+  margin-bottom: 3rem;
+}
+
+/* =============== CATEGORIES SECTION =============== */
+.categories-section {
+  padding: 8rem 0;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.category-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.category-item img {
+  width: 100%;
+  height: 35rem;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.category-item:hover img {
+  transform: scale(1.05);
+}
+
+.category-item h3 {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  padding: 1rem 0;
+  font-weight: 500;
+}
+
+/* =============== FEATURED SECTION =============== */
+.featured-section {
+  padding: 4rem 0;
+}
+
+.feature-banner {
+  position: relative;
+  height: 60vh;
+  overflow: hidden;
+}
+
+.feature-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.feature-content {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  color: white;
+  max-width: 500px;
+}
+
+.feature-content h2 {
+  font-family: var(--font-secondary);
+  font-size: 3.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-content p {
+  font-size: 1.8rem;
+  margin-bottom: 3rem;
+}
+
+/* =============== PRODUCT GRID STYLES =============== */
+.new-arrivals,
+.trending-section {
+  padding: 8rem 0;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+.product-item {
+  position: relative;
+}
+
+.product-image {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.product-image img {
+  width: 100%;
+  height: 35rem;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: white;
+  color: var(--light-text);
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.product-item:hover .wishlist-btn {
+  opacity: 1;
+}
+
+.wishlist-btn:hover {
+  color: var(--error-color);
+}
+
+.product-info h3 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-info .price {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.view-more,
+.action-buttons {
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* =============== SERVICES SECTION =============== */
+.services-section {
+  padding: 8rem 0;
+  background-color: var(--secondary-color);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+}
+
+.service-item {
+  text-align: center;
+}
+
+.service-item img {
+  width: 100%;
+  height: 30rem;
+  object-fit: cover;
+  margin-bottom: 2rem;
+}
+
+.service-item h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.service-item p {
+  margin-bottom: 2rem;
+  color: var(--light-text);
+}
+
+/* =============== RESPONSIVE STYLES =============== */
+@media (max-width: 1200px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid,
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-content h1 {
+    font-size: 3.2rem;
+  }
+
+  .hero-image {
+    height: 65vh;
+  }
+
+  .hero-content {
+    left: 5%;
+    bottom: 5%;
+  }
+
+  .feature-banner {
+    height: 40vh;
+  }
+
+  .feature-content {
+    left: 5%;
+  }
+
+  .feature-content h2 {
+    font-size: 2.8rem;
+  }
+
+  .categories-section,
+  .new-arrivals,
+  .trending-section,
+  .services-section {
+    padding: 5rem 0;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}

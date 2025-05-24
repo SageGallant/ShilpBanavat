@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | Shilp Banavat</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/custom-scroll.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Search Results Page Specific Styles */
+        .search-results-container {
+            padding: 2rem 0;
+        }
+
+        .search-header {
+            margin-bottom: 2rem;
+        }
+
+        .search-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-count {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .search-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .sort-container label {
+            margin-right: 0.5rem;
+        }
+
+        .filter-toggle {
+            display: none;
+            padding: 0.5rem 1rem;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .filters-container {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .filter-heading {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-heading::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            transition: transform 0.3s;
+        }
+
+        .filter-heading.active::after {
+            transform: rotate(180deg);
+        }
+
+        .filter-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .filter-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .filter-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .price-filter {
+            margin-top: 1rem;
+        }
+
+        .price-range {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+        }
+
+        .filter-button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .search-results {
+            flex: 1;
+        }
+
+        .search-results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .search-result-item {
+            display: flex;
+            gap: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .search-result-item .product-image {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .search-result-item .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .search-result-item .wishlist-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #fff;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-result-item .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-result-item h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .search-result-item .price {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-result-item .description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .search-result-item .product-category {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background-color: #f9f9f9;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background-color: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 2px;
+        }
+
+        .btn-view-product {
+            align-self: flex-start;
+            padding: 0.75rem 1.5rem;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-top: auto;
+        }
+
+        .highlight {
+            background-color: #ffffc9;
+            font-weight: bold;
+        }
+
+        .applied-filters {
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .applied-filters-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .applied-filter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #f0f0f0;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .remove-filter {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .clear-all-filters {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .no-results h2 {
+            margin-bottom: 1rem;
+        }
+
+        .no-results .btn-primary {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .search-layout {
+                flex-direction: column;
+            }
+
+            .filters-container {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #fff;
+                z-index: 1000;
+                padding: 1.5rem;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                overflow-y: auto;
+            }
+
+            .filters-container.active {
+                transform: translateX(0);
+            }
+
+            .filter-toggle {
+                display: block;
+            }
+
+            .search-result-item {
+                flex-direction: column;
+            }
+
+            .search-result-item .product-image {
+                width: 100%;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="header-actions">
+                    <div class="header-language">
+                        <span>English</span>
+                    </div>
+                    <div class="header-country">
+                        <span>India</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="main-header">
+                <div class="header-left">
+                    <nav class="main-navigation">
+                        <ul>
+                            <li><a href="product.html?category=new">New</a></li>
+                            <li><a href="product.html?category=women">Women</a></li>
+                            <li><a href="product.html?category=men">Men</a></li>
+                            <li><a href="product.html?category=home">Home</a></li>
+                            <li><a href="product.html?category=gifts">Gifts</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="logo">
+                    <a href="../index.html">SHILP BANAVAT</a>
+                </div>
+                <div class="header-right">
+                    <nav class="utility-navigation">
+                        <ul>
+                            <li><a href="#" id="search-toggle"><i class="fas fa-search"></i></a></li>
+                            <li><a href="profile.html"><i class="fas fa-user"></i></a></li>
+                            <li><a href="wishlist.html"><i class="fas fa-heart"></i></a></li>
+                            <li><a href="cart.html"><i class="fas fa-shopping-bag"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="../index.html">Home</a></li>
+                <li>Search Results</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="search-results-container">
+                <!-- Search Header -->
+                <div class="search-header">
+                    <h1 class="search-title">Search Results for: <span id="search-results-query"></span></h1>
+                    <p class="results-count">0 results found</p>
+                </div>
+
+                <!-- Applied Filters -->
+                <div class="applied-filters"></div>
+
+                <!-- Search Controls -->
+                <div class="search-controls">
+                    <button class="filter-toggle">Filter Results <i class="fas fa-filter"></i></button>
+                    <div class="sort-container">
+                        <label for="sort-by">Sort by:</label>
+                        <select id="sort-by" class="sort-select">
+                            <option value="relevance">Relevance</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="name-asc">Name: A-Z</option>
+                            <option value="name-desc">Name: Z-A</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Layout -->
+                <div class="search-layout">
+                    <!-- Filters Sidebar -->
+                    <div class="filters-container">
+                        <h2>Filters</h2>
+                        <form id="filter-form">
+                            <!-- Category Filter -->
+                            <div class="filter-section">
+                                <div class="filter-heading">Categories</div>
+                                <div class="filter-content">
+                                    <ul class="filter-list">
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-all" name="category" value="all" checked
+                                                class="filter-checkbox">
+                                            <label for="category-all">All Categories</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-pottery" name="category" value="pottery"
+                                                class="filter-checkbox">
+                                            <label for="category-pottery">Pottery & Ceramics</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-textiles" name="category" value="textiles"
+                                                class="filter-checkbox">
+                                            <label for="category-textiles">Textiles & Fabrics</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-jewelry" name="category" value="jewelry"
+                                                class="filter-checkbox">
+                                            <label for="category-jewelry">Jewelry</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-woodwork" name="category" value="woodwork"
+                                                class="filter-checkbox">
+                                            <label for="category-woodwork">Woodwork</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-metalwork" name="category"
+                                                value="metalwork" class="filter-checkbox">
+                                            <label for="category-metalwork">Metalwork</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-basketry" name="category" value="basketry"
+                                                class="filter-checkbox">
+                                            <label for="category-basketry">Basketry</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="radio" id="category-leatherwork" name="category"
+                                                value="leatherwork" class="filter-checkbox">
+                                            <label for="category-leatherwork">Leatherwork</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="filter-section">
+                                <div class="filter-heading">Price Range</div>
+                                <div class="filter-content">
+                                    <div class="price-filter">
+                                        <div id="price-display">$0 - $500</div>
+                                        <input type="range" id="price-range" class="price-range" min="0" max="500"
+                                            step="10" value="500">
+                                        <div class="price-inputs">
+                                            <input type="number" id="price_min" name="price_min" class="price-input"
+                                                placeholder="Min" min="0">
+                                            <input type="number" id="price_max" name="price_max" class="price-input"
+                                                placeholder="Max" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tags Filter -->
+                            <div class="filter-section">
+                                <div class="filter-heading">Product Tags</div>
+                                <div class="filter-content">
+                                    <ul class="filter-list">
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-home" name="tag" value="home"
+                                                class="filter-checkbox">
+                                            <label for="tag-home">Home</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-decor" name="tag" value="decor"
+                                                class="filter-checkbox">
+                                            <label for="tag-decor">Decor</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-accessories" name="tag" value="accessories"
+                                                class="filter-checkbox">
+                                            <label for="tag-accessories">Accessories</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-fashion" name="tag" value="fashion"
+                                                class="filter-checkbox">
+                                            <label for="tag-fashion">Fashion</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-gifts" name="tag" value="gifts"
+                                                class="filter-checkbox">
+                                            <label for="tag-gifts">Gifts</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-women" name="tag" value="women"
+                                                class="filter-checkbox">
+                                            <label for="tag-women">Women</label>
+                                        </li>
+                                        <li class="filter-item">
+                                            <input type="checkbox" id="tag-men" name="tag" value="men"
+                                                class="filter-checkbox">
+                                            <label for="tag-men">Men</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="filter-button">Apply Filters</button>
+                        </form>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div class="search-results">
+                        <div class="search-results-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-section">
+                    <h3>Customer Services</h3>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Product Care</a></li>
+                        <li><a href="#">Track Order</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>About Shilp Banavat</h3>
+                    <ul>
+                        <li><a href="#">Our Artisans</a></li>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Materials & Techniques</a></li>
+                        <li><a href="#">Sustainability</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section newsletter">
+                    <h3>Subscribe to Our Newsletter</h3>
+                    <p>Stay updated on new collections and exclusive offers.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Shilp Banavat. All rights reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/common.js"></script>
+    <script src="../js/icon-manager.js"></script>
+    <script src="../js/search.js"></script>
+    <script src="../js/search-results.js"></script>
+</body>
+
+</html>

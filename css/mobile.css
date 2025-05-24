@@ -1,0 +1,280 @@
+/* Additional Mobile Styles and Notification System */
+
+/* =============== NOTIFICATION SYSTEM =============== */
+.notification-container {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2000;
+  max-width: 35rem;
+}
+
+.notification {
+  background-color: white;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--primary-color);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateX(calc(100% + 2rem));
+  transition: transform 0.3s ease;
+  opacity: 0;
+}
+
+.notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notification-content i {
+  color: var(--success-color);
+  font-size: 1.8rem;
+}
+
+.notification-close {
+  color: var(--light-text);
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.notification-close:hover {
+  color: var(--primary-color);
+}
+
+/* =============== MOBILE NAVIGATION =============== */
+.mobile-nav-toggle {
+  display: none;
+  font-size: 2rem;
+  margin-right: 1.5rem;
+}
+
+.filter-toggle-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav-toggle {
+    display: block;
+  }
+
+  .main-navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 2000;
+    padding: 8rem 2rem 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .main-navigation.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .main-navigation ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .main-navigation a {
+    font-size: 2rem;
+  }
+
+  /* Filter sidebar mobile */
+  .filter-toggle-btn {
+    display: block;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--secondary-color);
+    border-radius: 0.3rem;
+    font-size: 1.4rem;
+    margin-right: 1rem;
+  }
+
+  .filters-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1500;
+    background-color: white;
+    padding: 2rem;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .filters-sidebar.active {
+    transform: translateX(0);
+  }
+
+  .filters-sidebar::before {
+    content: "Filters";
+    display: block;
+    font-size: 2.4rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+/* =============== CAROUSEL CONTROLS =============== */
+.carousel-wrapper {
+  position: relative;
+}
+
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.carousel-prev,
+.carousel-next {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.1);
+  font-size: 1.4rem;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: var(--transition);
+}
+
+.carousel-prev {
+  margin-left: -2rem;
+}
+
+.carousel-next {
+  margin-right: -2rem;
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Adjust carousel for mobile */
+@media (max-width: 576px) {
+  .carousel-prev,
+  .carousel-next {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.2rem;
+  }
+
+  .carousel-prev {
+    margin-left: -1rem;
+  }
+
+  .carousel-next {
+    margin-right: -1rem;
+  }
+}
+
+/* =============== SCROLLED HEADER =============== */
+.header.scrolled {
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+/* Compact header for mobile */
+.header.header-compact .header-top,
+.header.scrolled .header-top {
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.header.header-compact .main-header,
+.header.scrolled .main-header {
+  padding: 1rem 0;
+}
+
+/* Mobile header positioning */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 70px; /* Smaller header height for mobile */
+  }
+
+  body {
+    padding-top: var(--header-height);
+  }
+
+  .main-navigation {
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+  }
+}
+
+/* =============== UTILITY CLASSES FOR MOBILE =============== */
+@media (max-width: 576px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .section-title {
+    font-size: 2.4rem;
+    margin-bottom: 3rem;
+  }
+
+  .hero-image {
+    height: 65vh;
+  }
+
+  .hero-content {
+    left: 5%;
+    bottom: 5%;
+  }
+
+  .hero-content h1 {
+    font-size: 3.2rem;
+  }
+
+  .feature-banner {
+    height: 40vh;
+  }
+
+  .feature-content {
+    left: 5%;
+  }
+
+  .feature-content h2 {
+    font-size: 2.8rem;
+  }
+
+  .categories-section,
+  .new-arrivals,
+  .trending-section,
+  .services-section,
+  .recently-viewed,
+  .complementary-items,
+  .similar-products {
+    padding: 5rem 0;
+  }
+}

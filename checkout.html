@@ -1,0 +1,68 @@
+<div class="checkout-steps">
+    <div class="checkout-step active" data-title="Information">1</div>
+    <div class="checkout-step" data-title="Shipping">2</div>
+    <div class="checkout-step" data-title="Payment">3</div>
+</div>
+
+<div class="checkout-main">
+    <!-- Customer Information Section -->
+    <section id="customer-information" class="checkout-section active">
+        <h2 class="section-title">Customer Information</h2>
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <!-- Saved Addresses -->
+        <h3>Shipping Address</h3>
+        <div class="saved-addresses">
+            <!-- Address options from your existing code -->
+            <!-- ... -->
+        </div>
+
+        <!-- New Address Form (hidden initially) -->
+        <div class="new-address-form" style="display: none;">
+            <!-- Address form fields from your existing code -->
+            <!-- ... -->
+        </div>
+
+        <div class="checkout-nav">
+            <div></div> <!-- Empty div for flex spacing -->
+            <button id="to-shipping-btn" class="btn next-btn">Continue to Shipping</button>
+        </div>
+    </section>
+
+    <!-- Shipping Method Section -->
+    <section id="shipping-method" class="checkout-section">
+        <h2 class="section-title">Shipping Method</h2>
+        <div class="shipping-options">
+            <!-- Shipping options from your existing code -->
+            <!-- ... -->
+        </div>
+
+        <div class="checkout-nav">
+            <button id="back-to-customer-btn" class="btn back-btn">Back to Information</button>
+            <button id="to-payment-btn" class="btn next-btn">Continue to Payment</button>
+        </div>
+    </section>
+
+    <!-- Payment Method Section -->
+    <section id="payment-method" class="checkout-section">
+        <h2 class="section-title">Payment Method</h2>
+        <div class="payment-options">
+            <!-- Payment options from your existing code -->
+            <!-- ... -->
+        </div>
+
+        <!-- Card Payment Form (hidden initially) -->
+        <div class="card-payment-form" style="display: none;">
+            <!-- Card payment fields from your existing code -->
+            <!-- ... -->
+        </div>
+
+        <div class="checkout-nav">
+            <button id="back-to-shipping-btn" class="btn back-btn">Back to Shipping</button>
+            <button type="submit" class="btn next-btn">Place Order</button>
+        </div>
+    </section>
+</div>
